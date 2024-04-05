@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <title>XSS Vulnerability Demo</title>
+  <script async src="https://cdn.byu.edu/byu-theme-components/2.x.x/byu-theme-components.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.byu.edu/byu-theme-components/2.x.x/byu-theme-components.min.css" media="all">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+  <byu-header>
+
+    <h1 slot="site-title">XSS Vulnerability Demo</h1>
+  </byu-header>
+  <p>This page reflects user input and sets a vulnerable cookie.</p>
+
+  <!-- Button to open the modal login form -->
+  <button onclick="document.getElementById('id01').style.display='block'">Login</button>
+
+  <!-- The Modal -->
+  <div id="id01" class="modal">
+    <span onclick="document.getElementById('id01').style.display='none'" class="close"
+      title="Close Modal">&times;</span>
+
+    <!-- Modal Content -->
+    <form class="modal-content animate" action="">
+
+      <div class="container">
+        <label for="uname"><b>Username</b></label>
+        <input type="text" placeholder="Enter Username" name="username" required>
+
+        <label for="psw"><b>Password</b></label>
+        <input type="password" placeholder="Enter Password" name="password" required>
+
+        <button type="submit">Login</button>
+        <label>
+          <input type="checkbox" checked="checked" name="remember"> Remember me
+        </label>
+      </div>
+
+      <div class="container" style="background-color:#f1f1f1">
+        <button type="button" onclick="document.getElementById('id01').style.display='none'"
+          class="cancelbtn">Cancel</button>
+      </div>
+    </form>
+  </div>
+  <byu-footer></byu-footer>
+
+</body>
+<!-- Script to extract the "input" query parameter from the URL -->
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  const userInput = urlParams.get('input');
+  document.getElementById('userInput').innerHTML = `User input: ${userInput || 'No input provided'}`;
+</script>
+
+<!-- Vulnerable cookie set via JavaScript -->
+<script>
+  const cookieValue = urlParams.get('cookie');
+  document.cookie = `user_cookie=${cookieValue || 'default_cookie'}`;
+  let modal = document.getElementById('id01')
+  window.onclick = function (event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  }
+
+</script>
+
+</html>
